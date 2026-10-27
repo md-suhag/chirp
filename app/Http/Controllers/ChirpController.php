@@ -17,27 +17,54 @@ class ChirpController extends Controller
         return view("home", ["chirps" => $chirps]);
     }
 
-    public function store(Request $request){
+    public function store(Request $request)
+    {
 
 
-        $validated = $request->validate([ 
-            'message'=>'required|string|max:225'
-        ],[
+        $validated = $request->validate([
+            'message' => 'required|string|max:225'
+        ], [
 
-            "message.required"=> "Please write something to chrip!",
-            "message.max"=>"Chirps must be 255 characters or less"
+            "message.required" => "Please write something to chrip!",
+            "message.max" => "Chirps must be 255 characters or less"
         ]);
 
-       Chirp::create([
-            "message"=> $validated['message'],
-            'user_id'=> null
+        Chirp::create([
+            "message" => $validated['message'],
+            'user_id' => null
         ]);
 
-        return redirect('/')->with("success","Chirp Created Successfully !");
+        return redirect('/')->with("success", "Chirp Created Successfully !");
 
 
     }
 
+    public function edit(Chirp $chirp)
+    {
+        return view("chirps.edit", compact("chirp"));
+
+    }
+
+    public function update(Request $request , Chirp $chirp){
+
+
+        $validated = $request->validate([
+            'message' => 'required|string|max:255'
+        ]);
+
+        $chirp->update($validated);
+
+
+        return redirect("/") ->with("success", "Chirp updated");
+
+    }
+
+
+    public function destroy(Chirp $chirp)   {
+        $chirp->delete();
+
+        return redirect("/")->with("success","Chirp deleted");
+    }
 
 
 }
